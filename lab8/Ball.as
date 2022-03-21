@@ -37,9 +37,35 @@
 				}
 			
 				checkWall();
+				checkPocket();
+			
+				//HAVE A FUNCTION HERE TO SEE IF IT GOES IN THE POCKET
 				
 			}
 			
+		}
+	
+		public function checkPocket (): void {
+			// CHECK POCKET 1
+			if (this.x == 141.45 && this.y == 100.1){
+				
+			}
+			
+			// CHECK POCKET 2
+			else if (this.x == 596.35 && this.y == 100.5){
+				
+			}
+			
+			
+			// CHECK POCKET 3
+			else if (this.x == 142 && this.y == 335.6){
+				
+			}
+			
+			// CHECK POCKET 4
+			else if (this.x == 597.35 && this.y == 333.36){
+				
+			}
 		}
 	
 		public function checkWall(): void {
