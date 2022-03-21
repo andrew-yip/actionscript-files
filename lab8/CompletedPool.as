@@ -18,37 +18,37 @@
 
 		public function CompletedPool() {
 			// constructor code
-			cueBall = new WhiteBall(400, 250);
+			cueBall = new WhiteBall(400, 220);
 			cueBall.vx = 0;
 			cueBall.vy = 0;
 			addChild(cueBall);
 
-			blackBall = new BlackBall(400, 260);
+			blackBall = new BlackBall(400, 230);
 			blackBall.vx = 0;
 			blackBall.vy = 0;
 			addChild(blackBall);
 
-			blueBall = new BlueBall(400, 270);
+			blueBall = new BlueBall(400, 240);
 			blueBall.vx = 0;
 			blueBall.vy = 0;
 			addChild(blueBall);
 
-			redBall = new RedBall(400, 280);
+			redBall = new RedBall(400, 250);
 			redBall.vx = 0;
 			redBall.vy = 0;
 			addChild(redBall);
 
-			greenBall = new GreenBall(400, 290);
+			greenBall = new GreenBall(400, 260);
 			greenBall.vx = 0;
 			greenBall.vy = 0;
 			addChild(greenBall);
 
-			yellowBall = new YellowBall(400, 300);
+			yellowBall = new YellowBall(400, 270);
 			yellowBall.vx = 0;
 			yellowBall.vy = 0;
 			addChild(yellowBall);
 
-			purpleBall = new PurpleBall(400, 310);
+			purpleBall = new PurpleBall(400, 280);
 			purpleBall.vx = 0;
 			purpleBall.vy = 0;
 			addChild(purpleBall);
@@ -65,6 +65,12 @@
 
 		public function updateObjects(event: Event) {
 			cueBall.movePosition();
+			blackBall.movePosition();
+			blueBall.movePosition();
+			redBall.movePosition();
+			greenBall.movePosition();
+			yellowBall.movePosition();
+			purpleBall.movePosition();
 
 			var dx: Number = cueBall.x - mouseX;
 			var dy: Number = cueBall.y - mouseY;
@@ -80,20 +86,25 @@
 			checkCollision(cueBall, redBall);
 			checkCollision(cueBall, greenBall);
 			checkCollision(cueBall, yellowBall);
+			checkCollision(cueBall, purpleBall);
 			
 			checkCollision(blackBall, blueBall);
 			checkCollision(blackBall, redBall);
 			checkCollision(blackBall, greenBall);
 			checkCollision(blackBall, yellowBall);
+			checkCollision(blackBall, purpleBall);
 			
 			checkCollision(blueBall, redBall);
 			checkCollision(blueBall, greenBall);
 			checkCollision(blueBall, yellowBall);
+			checkCollision(blueBall, purpleBall);
 			
 			checkCollision(redBall, greenBall);
 			checkCollision(redBall, yellowBall);
+			checkCollision(redBall, purpleBall);
 			
 			checkCollision(greenBall, yellowBall);
+			checkCollision(greenBall, purpleBall);
 			
 			
 		}
