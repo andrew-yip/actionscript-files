@@ -5,7 +5,7 @@
 		//dimensions
 		public static var COlS:int = 11;
 		public static var ROWS:int = 11;
-		public static var WIDTH:int = 30;
+		public static var WIDTH:int = 40;
 		public static var OFFSET:int = 20;
 		
 		//terrain codes
