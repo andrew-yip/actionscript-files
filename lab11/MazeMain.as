@@ -6,6 +6,8 @@
 	public class MazeMain extends MovieClip {
 
 		public var mazeCells: Array;
+		public var runner: Runner;
+		public var player: Player;
 
 		public function MazeMain() {
 
@@ -24,6 +26,19 @@
 
 			// TASK 3: DRAW THE MAZE
 			drawMazeCells();
+		
+			// TASK 4: ADD THE PLAYER & RUNNER
+		
+			player = new Player();
+			player.x = 20;
+			player.y = 20;
+		
+			runner = new Runner();
+			runner.x = 70;
+			runner.y = 0;
+		
+			addChild(runner);
+			addChild(player);
 		}
 
 		public function drawMazeCells(): void {

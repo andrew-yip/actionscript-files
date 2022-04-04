@@ -5,11 +5,11 @@
 	
 	public class Game extends MovieClip{
 
-		public static var SIZE: int = 10;
+		public static var SIZE: int = 18;
 		public static var OFFSET: int = 10;
 		
-		public static var COLS: int = 35;
-		public static var ROWS: int = 35;
+		public static var COLS: int = 25;
+		public static var ROWS: int = 25;
 		
 		public static var N_CELLS: int = ROWS * COLS;
 		
