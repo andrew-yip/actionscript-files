@@ -7,11 +7,17 @@
 		//GAME ELEMENTS
 		private var car:Car;
 		private var lastTimeStamp:uint;
+		private var speedometer: Speedometer;
 
 		public function CarDrivingGame() {
 			//TASK 1: ADD THE CAR TO THE STAGE
 			car = new Car(track.x, track.y);
 			addChild(car);
+			
+			speedometer = new Speedometer();
+			speedometer.x = 130;
+			speedometer.y = 470;
+			addChild(speedometer);
 
 			// TASK 2: REGISTER KEYBOARD EVENTS FOR KEY DOWN
 			// NOTE: USING BOTH EVENTS, USERS CAN TURN AND ACCELERATE SIMULTANEUSLY
@@ -21,6 +27,7 @@
 			//TASK 3: REGISTER LISTENER EVENT FOR THE GAME LOOP
 			lastTimeStamp = getTimer();
 			addEventListener(Event.ENTER_FRAME,updateCameraAngle);
+			
 		}
 
 		public function updateCameraAngle(event:Event) {
@@ -32,6 +39,12 @@
 			var toRadians:Number = Math.PI / 180;
 			track.x +=  car.velocity * Math.sin(car.rotation * toRadians) * elapsedTime / 100;
 			track.y -=  car.velocity * Math.cos(car.rotation * toRadians) * elapsedTime / 100;
+			
+			if (track.hitTestPoint(car.x, car.y, true)){
+				car.collisionUpdate();
+			}
+		
+			speedometer.needle.rotation = car.velocity *3 * -1;
 			
 		}
 

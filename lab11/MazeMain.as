@@ -16,11 +16,15 @@
 		public var runnerCol: Number;
 		
 		public var isPlayer: Boolean;
+		
+		// store path of cpu
+		private var path: Array;
 
 		public function MazeMain() {
 
 			// TASK 1: INSTANTIATE THE MAZE OF CELLS AND ADD 10 X 10 CELLS
 			mazeCells = new Array(100);
+			path = new Array();
 			var i: int = 0;
 			for (var row: int = 0; row < Game.ROWS; row++) {
 				for (var col: int = 0; col < Game.COLS; col++) {
@@ -56,15 +60,21 @@
 		
 			// play game (controls to play)
 			stage.addEventListener(KeyboardEvent.KEY_UP, playGame);
+			//runnerMove();
 			//addEventListener(Event.ENTER_FRAME, runnerMove);
 		}
 	
-		public function runnerMove(e:Event): void {
+		public function runnerReposition (): void {
+			runner.x = runnerCol * Game.SIZE + Game.OFFSET;
+			runner.y = runnerRow * Game.SIZE + Game.OFFSET;
+		}
+	
+		public function runnerMove(): void {
 			//TASK 1: CREATE BACKTRACKER VARIABLES AND INITIALIZE
-			var stack: Array = new Array();
+			path = new Array();
 			var i: int = 0; //Start position will be the first cell in the maze
 			mazeCells[i].visited = true; //Mark this first cell as visited
-			stack.push(i); //Push the cell onto the stack;
+			path.push(i); //Push the cell onto the stack;
 			var visitedCells: int = 1; //The number of cells visited so far is one.
 
 			//TASK 2: BACKTRACKING
@@ -77,14 +87,14 @@
 				//NOT A CELL ON THE WESTERN-EDGE OF THE MAZE
 				if (mazeCells[i].west && i % Game.COLS != 0) {
 					if (!mazeCells[i - 1].visited) {
-						possibleWalls.push(Game.WEST);
+						path.push(Game.WEST);
 					}
 				}
 
 				//NOT A CELL ON THE EASTERN-EDGE OF THE MAZE
 				if (mazeCells[i].east && i % Game.COLS != Game.COLS - 1) {
 					if (!mazeCells[i + 1].visited) {
-						possibleWalls.push(Game.EAST);
+						path.push(Game.EAST);
 					}
 				}
 
@@ -92,7 +102,7 @@
 
 				if (mazeCells[i].south && i < Game.COLS * Game.ROWS - Game.COLS) {
 					if (!mazeCells[i + Game.COLS].visited) {
-						possibleWalls.push(Game.SOUTH);
+						path.push(Game.SOUTH);
 					}
 				}
 
@@ -100,7 +110,7 @@
 
 				if (mazeCells[i].north && i >= Game.COLS) {
 					if (!mazeCells[i - Game.COLS].visited) {
-						possibleWalls.push(Game.NORTH);
+						path.push(Game.NORTH);
 					}
 				}
 
@@ -135,20 +145,22 @@
 					}
 
 					mazeCells[i].visited = true;
-					runner.x = mazeCells[i].x * Game.SIZE + Game.OFFSET;
-					runner.y = mazeCells[i].y * Game.SIZE + Game.OFFSET;;
-					stack.push(i); //PUSH THE NEXT CELL ONTO THE STACK;
+					path.push(i); //PUSH THE NEXT CELL ONTO THE STACK;
 					visitedCells++; //COUNT THIS NEXT CELL AS VISITED
 				} else {
 
 					//PART C: IF NO WALLS CAN BE REMOVED,
+
 					// BEGIN BACKTRACKING; POP THE STACK
-					var top: int = stack.pop();
+					var top: int = path.pop();
 					if (top == i) {
-						i = stack.pop(); //POP THE STACK - REVERSE
-						stack.push(i);
+						i = path.pop(); //POP THE STACK - REVERSE
+						path.push(i);
 					}
 				}
+			
+				// TO REPOSITION THE RUNNER
+				runnerReposition();
 			}
 		}
 	

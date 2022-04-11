@@ -54,11 +54,15 @@
 		}
 	
 		public function applyBrake() {
-			if ((velocity > Game.MIN_VELOCITY)) {
+			if ((velocity < Game.MIN_VELOCITY)) {
 				velocity *= Game.BRAKE;
 			} else {
 				velocity = 0;
 			}
+		}
+	
+		public function collisionUpdate(){
+			velocity *= Game.SLOW;
 		}
 	}
 }
