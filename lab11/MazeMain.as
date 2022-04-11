@@ -8,6 +8,12 @@
 		public var mazeCells: Array;
 		public var runner: Runner;
 		public var player: Player;
+		
+		public var playerRow: Number;
+		public var playerCol: Number;
+		
+		public var runnerRow: Number;
+		public var runnerCol: Number;
 
 		public function MazeMain() {
 
@@ -26,19 +32,62 @@
 
 			// TASK 3: DRAW THE MAZE
 			drawMazeCells();
-		
+
 			// TASK 4: ADD THE PLAYER & RUNNER
 		
+			playerRow = 0;
+			playerCol = 0;
+		
+			runnerRow = Game.COLS - 1;
+			runnerCol = Game.ROWS - 1;
+
 			player = new Player();
-			player.x = 20;
-			player.y = 20;
-		
+			player.x = playerCol * Game.SIZE + Game.OFFSET;
+			player.y = playerRow * Game.SIZE + Game.OFFSET;
+
 			runner = new Runner();
-			runner.x = 70;
-			runner.y = 0;
-		
+			runner.x = runnerCol * Game.SIZE + Game.OFFSET;
+			runner.y = runnerRow * Game.SIZE + Game.OFFSET;
+				
 			addChild(runner);
 			addChild(player);
+		
+			// play game (controls to play)
+			stage.addEventListener(KeyboardEvent.KEY_UP, playGame);
+		}
+	
+	
+		public function playGame(event: KeyboardEvent): void {
+			
+			var position: int = ((playerRow) * Game.COLS) + playerCol;
+			
+			switch (event.keyCode){
+				case Game.UPARROW:
+					if (mazeCells[position].north == false){
+						playerRow--;
+					}
+					break;
+				case Game.DOWNARROW:
+					if (mazeCells[position].south == false){
+						playerRow++;
+					}
+					break;
+				case Game.LEFTARROW:
+					if (mazeCells[position].west == false){
+						playerCol--;
+					}
+					break;
+				case Game.RIGHTARROW:
+					if (mazeCells[position].east == false){
+						playerCol++;
+					}
+					break;
+			}
+		
+			// to change the rendering of the image on the screen
+			player.x = playerCol * Game.SIZE + Game.OFFSET;
+			player.y = playerRow * Game.SIZE + Game.OFFSET;
+			
 		}
 
 		public function drawMazeCells(): void {
@@ -80,47 +129,37 @@
 			}
 		}
 
-public function backtracker ():void {
+		public function backtracker(): void {
 
 			//TASK 1: CREATE BACKTRACKER VARIABLES AND INITIALIZE
 
-			var stack:Array=new Array();
+			var stack: Array = new Array();
 
+			var i: int = 0; //Start position will be the first cell in the maze
 
+			mazeCells[i].visited = true; //Mark this first cell as visited
 
-			var i:int = 0;				//Start position will be the first cell in the maze
+			stack.push(i); //Push the cell onto the stack;
 
-			mazeCells[i].visited = true;//Mark this first cell as visited
-
-			stack.push (i);				//Push the cell onto the stack;
-
-			var visitedCells:int = 1;	//The number of cells visited so far is one.
-
-
+			var visitedCells: int = 1; //The number of cells visited so far is one.
 
 			//TASK 2: BACKTRACKING
 
 			//PART A: FOR EACH CELL, BUILD A STRING CONTAINING A LIST OF WALLS (N, S, E, W) THAT CAN BE ELIMINATED
 
-
-
 			while (visitedCells < Game.N_CELLS) {
 
 				//CONSTRAINTS:  COLLECT ALL POSSIBLE WALLS THAT CAN BE REMOVED
 
-				var possibleWalls:Array=new Array();
-
-				
-
-
+				var possibleWalls: Array = new Array();
 
 				//NOT A CELL ON THE WESTERN-EDGE OF THE MAZE
 
 				if (mazeCells[i].west && i % Game.COLS != 0) {
 
-					if (! mazeCells[i - 1].visited) {
+					if (!mazeCells[i - 1].visited) {
 
-						possibleWalls.push (Game.WEST);
+						possibleWalls.push(Game.WEST);
 
 					}
 
@@ -130,9 +169,9 @@ public function backtracker ():void {
 
 				if (mazeCells[i].east && i % Game.COLS != Game.COLS - 1) {
 
-					if (! mazeCells[i + 1].visited) {
+					if (!mazeCells[i + 1].visited) {
 
-						possibleWalls.push (Game.EAST);
+						possibleWalls.push(Game.EAST);
 
 					}
 
@@ -142,9 +181,9 @@ public function backtracker ():void {
 
 				if (mazeCells[i].south && i < Game.COLS * Game.ROWS - Game.COLS) {
 
-					if (! mazeCells[i + Game.COLS].visited) {
+					if (!mazeCells[i + Game.COLS].visited) {
 
-						possibleWalls.push (Game.SOUTH);
+						possibleWalls.push(Game.SOUTH);
 
 					}
 
@@ -154,15 +193,13 @@ public function backtracker ():void {
 
 				if (mazeCells[i].north && i >= Game.COLS) {
 
-					if (! mazeCells[i - Game.COLS].visited) {
+					if (!mazeCells[i - Game.COLS].visited) {
 
-						possibleWalls.push (Game.NORTH);
+						possibleWalls.push(Game.NORTH);
 
 					}
 
 				}
-
-				
 
 				//PART B: IF possibleWalls CONTAINS WALLS TO REMOVE,
 
@@ -172,37 +209,31 @@ public function backtracker ():void {
 
 					var randomWall = possibleWalls[Math.floor(Math.random() * possibleWalls.length)];
 
-					
-
-					
-
-					
-
 					//OPEN THE WALL FOR THE CELL AS WELL AS THE WALL OF THE OTHER CELL
 
 					switch (randomWall) {
 
-						case Game.NORTH :
+						case Game.NORTH:
 
 							mazeCells[i].north = false;
 
 							mazeCells[i - Game.COLS].south = false;
 
-							i -=  Game.COLS;
+							i -= Game.COLS;
 
 							break;
 
-						case Game.SOUTH :
+						case Game.SOUTH:
 
 							mazeCells[i].south = false;
 
 							mazeCells[i + Game.COLS].north = false;
 
-							i +=  Game.COLS;
+							i += Game.COLS;
 
 							break;
 
-						case Game.EAST :
+						case Game.EAST:
 
 							mazeCells[i].east = false;
 
@@ -212,7 +243,7 @@ public function backtracker ():void {
 
 							break;
 
-						case Game.WEST :
+						case Game.WEST:
 
 							mazeCells[i].west = false;
 
@@ -226,25 +257,23 @@ public function backtracker ():void {
 
 					mazeCells[i].visited = true;
 
-					stack.push (i);				//PUSH THE NEXT CELL ONTO THE STACK;
+					stack.push(i); //PUSH THE NEXT CELL ONTO THE STACK;
 
-					visitedCells++;				//COUNT THIS NEXT CELL AS VISITED
+					visitedCells++; //COUNT THIS NEXT CELL AS VISITED
 
-				}
-
-				else {
+				} else {
 
 					//PART C: IF NO WALLS CAN BE REMOVED,
 
 					// BEGIN BACKTRACKING; POP THE STACK
 
-					var top:int = stack.pop();
+					var top: int = stack.pop();
 
-					if (top==i) {
+					if (top == i) {
 
-						i = stack.pop();	//POP THE STACK - REVERSE
+						i = stack.pop(); //POP THE STACK - REVERSE
 
-						stack.push (i);
+						stack.push(i);
 
 					}
 
