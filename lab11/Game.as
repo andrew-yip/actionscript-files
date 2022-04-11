@@ -18,6 +18,7 @@
 		public static var EAST: int = 2;
 		public static var WEST: int = 3;
 		
+		// CONTROLS
 		public static var UPARROW:int = 38;
 		public static var DOWNARROW:int = 40;
 		public static var LEFTARROW:int = 37;
