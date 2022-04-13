@@ -3,12 +3,12 @@
 	import flash.display.*;
 	import flash.events.*;
 	
-	public class Player extends MovieClip{
+	public class FinishBlock extends MovieClip{
 		
 		public var visited: Boolean;
 		public var index: int;
 
-		public function Player(i, row, col: int) {
+		public function FinishBlock(i, row, col: int) {
 			// constructor code
 			index = i;
 			this.x = col * Game.SIZE + Game.OFFSET;

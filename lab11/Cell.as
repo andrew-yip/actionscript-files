@@ -13,12 +13,16 @@
 		public var south: Boolean;
 		public var east: Boolean;
 		public var west: Boolean;
+		public var row: int;
+		public var col: int;
 
 		public function Cell(row, col: int) {
 			// constructor code
 			// SET THE UPPER LEFT X AND Y POSITION OF THE CELL
 			xPos = col * Game.SIZE + Game.OFFSET;
 			yPos = row * Game.SIZE + Game.OFFSET;
+			this.row = row;
+			this.col = col;
 			
 			visited = false;
 			north = true;

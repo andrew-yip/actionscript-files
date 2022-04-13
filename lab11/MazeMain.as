@@ -2,6 +2,7 @@
 
 	import flash.display.*;
 	import flash.events.*;
+	import flash.utils.Timer;
 
 	public class MazeMain extends MovieClip {
 
@@ -9,13 +10,13 @@
 		public var runner: Runner;
 		public var player: Player;
 		
-		public var playerRow: Number;
-		public var playerCol: Number;
+		public var timer: Timer;
 		
-		public var runnerRow: Number;
-		public var runnerCol: Number;
+		public var startIndex: int;
+		public var endIndex: int;
 		
-		public var isPlayer: Boolean;
+		public var startBlock: StartBlock;
+		public var finishBlock: FinishBlock;
 		
 		// store path of cpu
 		private var path: Array;
@@ -40,77 +41,70 @@
 			drawMazeCells();
 
 			// TASK 4: ADD THE PLAYER & RUNNER
-		
-			playerRow = 0;
-			playerCol = 0;
-		
-			runnerRow = Game.COLS - 1;
-			runnerCol = Game.ROWS - 1;
-
-			player = new Player();
-			player.x = playerCol * Game.SIZE + Game.OFFSET;
-			player.y = playerRow * Game.SIZE + Game.OFFSET;
-
-			runner = new Runner();
-			runner.x = runnerCol * Game.SIZE + Game.OFFSET;
-			runner.y = runnerRow * Game.SIZE + Game.OFFSET;
-				
-			addChild(runner);
-			addChild(player);
+			clearVisited();
 		
 			// play game (controls to play)
-			stage.addEventListener(KeyboardEvent.KEY_UP, playGame);
-			//runnerMove();
-			//addEventListener(Event.ENTER_FRAME, runnerMove);
+			startGame();
 		}
 	
-		public function runnerReposition (): void {
-			runner.x = runnerCol * Game.SIZE + Game.OFFSET;
-			runner.y = runnerRow * Game.SIZE + Game.OFFSET;
+		public function startGame(): void {
+			startIndex = Math.floor(Math.random()*mazeCells.length);
+			endIndex = Math.floor(Math.random()*mazeCells.length);
+			startBlock = new StartBlock(startIndex, mazeCells[startIndex].row, mazeCells[startIndex].col);
+			addChild(startBlock);
+			finishBlock = new FinishBlock(endIndex, mazeCells[endIndex].row, mazeCells[endIndex].col);
+			addChild(finishBlock);
+			
+			player = new Player(startIndex, mazeCells[startIndex].row, mazeCells[endIndex].col);
+			runner = new Runner(endIndex, mazeCells[endIndex].row, mazeCells[endIndex].col);
+			addChild(runner);
+			addChild(player);
+			stage.addEventListener(KeyboardEvent.KEY_UP, playGame);
+			runnerMove();
 		}
 	
 		public function runnerMove(): void {
 			//TASK 1: CREATE BACKTRACKER VARIABLES AND INITIALIZE
 			path = new Array();
-			var i: int = 0; //Start position will be the first cell in the maze
+			var i:int = startBlock.index; //Start position will be the first cell in the maze
 			mazeCells[i].visited = true; //Mark this first cell as visited
 			path.push(i); //Push the cell onto the stack;
-			var visitedCells: int = 1; //The number of cells visited so far is one.
 
 			//TASK 2: BACKTRACKING
 
 			//PART A: FOR EACH CELL, BUILD A STRING CONTAINING A LIST OF WALLS (N, S, E, W) THAT CAN BE ELIMINATED
 
-			while (visitedCells < Game.N_CELLS) {
+			while (i != finishBlock.index) {
 				//CONSTRAINTS:  COLLECT ALL POSSIBLE WALLS THAT CAN BE REMOVED
-				var possibleWalls: Array = new Array();
+				var possibleDirections: Array = new Array();
 				//NOT A CELL ON THE WESTERN-EDGE OF THE MAZE
+				
 				if (mazeCells[i].west && i % Game.COLS != 0) {
-					if (!mazeCells[i - 1].visited) {
-						path.push(Game.WEST);
+					if (!mazeCells[i-1].east && !mazeCells[i-1].visited){
+						possibleDirections.push(Game.WEST);
 					}
 				}
 
 				//NOT A CELL ON THE EASTERN-EDGE OF THE MAZE
 				if (mazeCells[i].east && i % Game.COLS != Game.COLS - 1) {
-					if (!mazeCells[i + 1].visited) {
-						path.push(Game.EAST);
+					if (!mazeCells[i+1].west && !mazeCells[i+1].visited){
+						possibleDirections.push(Game.EAST);
 					}
 				}
 
 				//NOT A CELL ON THE SOUTHERN-EDGE OF THE MAZE
 
-				if (mazeCells[i].south && i < Game.COLS * Game.ROWS - Game.COLS) {
-					if (!mazeCells[i + Game.COLS].visited) {
-						path.push(Game.SOUTH);
+				if (!mazeCells[i].south && i < Game.COLS * Game.ROWS - Game.COLS) {
+					if (!mazeCells[i+Game.COLS].north && !mazeCells[i-Game.COLS].visited) {
+						possibleDirections.push(Game.SOUTH);
 					}
 				}
 
 				//NOT A CELL ON THE NORTHERN-EDGE OF THE MAZE
 
-				if (mazeCells[i].north && i >= Game.COLS) {
-					if (!mazeCells[i - Game.COLS].visited) {
-						path.push(Game.NORTH);
+				if (!mazeCells[i].north && i >= Game.COLS) {
+					if (!mazeCells[i-Game.SOUTH] && !mazeCells[i-Game.COLS].visited){
+						possibleDirections.push(Game.NORTH);
 					}
 				}
 
@@ -118,35 +112,27 @@
 
 				// GENERATE A RANDOM WALL FROM THE POSSIBLE WALLS, ELIMINATE THE WALL, AND MARK THE NEW CELL AS VISITED
 
-				if (possibleWalls.length > 0) {
-					var randomWall = possibleWalls[Math.floor(Math.random() * possibleWalls.length)];
+				if (possibleDirections.length > 0) {
+					var randomDirection = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
 					//OPEN THE WALL FOR THE CELL AS WELL AS THE WALL OF THE OTHER CELL
-					switch (randomWall) {
+					switch (randomDirection) {
 						case Game.NORTH:
-							mazeCells[i].north = false;
-							mazeCells[i - Game.COLS].south = false;
 							i -= Game.COLS;
 							break;
 						case Game.SOUTH:
-							mazeCells[i].south = false;
-							mazeCells[i + Game.COLS].north = false;
 							i += Game.COLS;
 							break;
 						case Game.EAST:
-							mazeCells[i].east = false;
-							mazeCells[i + 1].west = false;
 							i++;
 							break;
 						case Game.WEST:
-							mazeCells[i].west = false;
-							mazeCells[i - 1].east = false;
 							i--;
 							break;
 					}
 
 					mazeCells[i].visited = true;
 					path.push(i); //PUSH THE NEXT CELL ONTO THE STACK;
-					visitedCells++; //COUNT THIS NEXT CELL AS VISITED
+				
 				} else {
 
 					//PART C: IF NO WALLS CAN BE REMOVED,
@@ -160,46 +146,57 @@
 				}
 			
 				// TO REPOSITION THE RUNNER
-				runnerReposition();
+				var temp: int = path.length;
+				timer = new Timer(250, temp);
+				timer.addEventListener(TimerEvent.TIMER, onTick);
+				timer.start();
+			}
+		}
+	
+		public function onTick(event: TimerEvent){
+			var nextMove: int = path.pop();
+			runner.index = nextMove;
+			runnerReposition();
+			if (runner.index == startBlock.index) {
+				trace("YOU LOSE");
 			}
 		}
 	
 	
 		public function playGame(event: KeyboardEvent): void {
 			
-			var position: int = ((playerRow) * Game.COLS) + playerCol;
-			
 			switch (event.keyCode){
 				case Game.UPARROW:
-					if (mazeCells[position].north == false){
-						playerRow--;
+					if (!mazeCells[player.index].north && player.index >= Game.COLS){
+						if (!mazeCells[player.index - Game.COLS].south){
+							player.index -= Game.COLS;
+						}
 					}
 					break;
 				case Game.DOWNARROW:
-					if (mazeCells[position].south == false){
-						playerRow++;
+					if (!mazeCells[player.index].south && player.index < Game.COLS * Game.ROWS - Game.COLS){
+						if (!mazeCells[player.index + Game.COLS].north){
+							player.index += Game.COLS;
+						}
 					}
 					break;
 				case Game.LEFTARROW:
-					if (mazeCells[position].west == false){
-						playerCol--;
+					if (!mazeCells[player.index].west && player.index % Game.COLS != 0){
+						if (!mazeCells[player.index - 1].east){
+							player.index--;
+						}
 					}
 					break;
 				case Game.RIGHTARROW:
-					if (mazeCells[position].east == false){
-						playerCol++;
+					if (!mazeCells[player.index].east && player.index % Game.COLS != Game.COLS - 1){
+						if (!mazeCells[player.index + 1].west){
+							player.index++;
+						}
 					}
 					break;
 			}
 		
-			// to change the rendering of the image on the screen
-			player.x = playerCol * Game.SIZE + Game.OFFSET;
-			player.y = playerRow * Game.SIZE + Game.OFFSET;
-		
-			// WINNING MESSAGE
-			if (playerCol == Game.COLS && playerRow == Game.ROWS){
-				trace("WINNER!");
-			}
+			playerReposition();
 			
 		}
 
@@ -240,6 +237,22 @@
 
 				addChild(shape);
 			}
+		}
+			
+		public function clearVisited(): void {
+			for (var i: int = 0; i < mazeCells.length; i++){
+				mazeCells[i].visited = false;
+			}
+		}
+	
+		public function runnerReposition (): void {
+			runner.x = mazeCells[runner.index].col * Game.SIZE + Game.OFFSET;
+			runner.y = mazeCells[runner.index].row * Game.SIZE + Game.OFFSET;
+		}
+	
+		public function playerReposition (): void {
+			player.x = mazeCells[player.index].col * Game.SIZE + Game.OFFSET;
+			player.y = mazeCells[player.index].row * Game.SIZE + Game.OFFSET;
 		}
 
 		public function backtracker(): void {
