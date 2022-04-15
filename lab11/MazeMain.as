@@ -50,15 +50,19 @@
 		public function startGame(): void {
 			startIndex = Math.floor(Math.random()*mazeCells.length);
 			endIndex = Math.floor(Math.random()*mazeCells.length);
+			
 			startBlock = new StartBlock(startIndex, mazeCells[startIndex].row, mazeCells[startIndex].col);
 			addChild(startBlock);
+			
 			finishBlock = new FinishBlock(endIndex, mazeCells[endIndex].row, mazeCells[endIndex].col);
 			addChild(finishBlock);
 			
-			player = new Player(startIndex, mazeCells[startIndex].row, mazeCells[endIndex].col);
+			player = new Player(startIndex, mazeCells[startIndex].row, mazeCells[startIndex].col);
 			runner = new Runner(endIndex, mazeCells[endIndex].row, mazeCells[endIndex].col);
+			
 			addChild(runner);
 			addChild(player);
+			
 			stage.addEventListener(KeyboardEvent.KEY_UP, playGame);
 			runnerMove();
 		}
@@ -77,34 +81,44 @@
 			while (i != finishBlock.index) {
 				//CONSTRAINTS:  COLLECT ALL POSSIBLE WALLS THAT CAN BE REMOVED
 				var possibleDirections: Array = new Array();
-				//NOT A CELL ON THE WESTERN-EDGE OF THE MAZE
 				
-				if (mazeCells[i].west && i % Game.COLS != 0) {
-					if (!mazeCells[i-1].east && !mazeCells[i-1].visited){
-						possibleDirections.push(Game.WEST);
+				// NORTH
+				if (!mazeCells[i].north && i >= Game.COLS){
+					if (!mazeCells[i - Game.COLS].south){
+						if (!mazeCells[i - Game.COLS].visited){
+							trace("in north");
+							possibleDirections.push(Game.NORTH);
+						}
 					}
 				}
-
-				//NOT A CELL ON THE EASTERN-EDGE OF THE MAZE
-				if (mazeCells[i].east && i % Game.COLS != Game.COLS - 1) {
-					if (!mazeCells[i+1].west && !mazeCells[i+1].visited){
-						possibleDirections.push(Game.EAST);
+			
+				// SOUTH
+				if (!mazeCells[i].south && i < Game.COLS * Game.ROWS - Game.COLS){
+					if (!mazeCells[i + Game.COLS].north){
+						if (!mazeCells[i + Game.COLS].visited){
+							trace("in south");
+							possibleDirections.push(Game.SOUTH);
+						}
 					}
 				}
-
-				//NOT A CELL ON THE SOUTHERN-EDGE OF THE MAZE
-
-				if (!mazeCells[i].south && i < Game.COLS * Game.ROWS - Game.COLS) {
-					if (!mazeCells[i+Game.COLS].north && !mazeCells[i-Game.COLS].visited) {
-						possibleDirections.push(Game.SOUTH);
+			
+				// EAST
+				if (!mazeCells[i].east && i % Game.COLS != Game.COLS - 1){
+					if (!mazeCells[i + 1].west){
+						if (!mazeCells[i + 1].visited){
+							trace("in east");
+							possibleDirections.push(Game.EAST);
+						}
 					}
 				}
-
-				//NOT A CELL ON THE NORTHERN-EDGE OF THE MAZE
-
-				if (!mazeCells[i].north && i >= Game.COLS) {
-					if (!mazeCells[i-Game.SOUTH] && !mazeCells[i-Game.COLS].visited){
-						possibleDirections.push(Game.NORTH);
+			
+				// WEST
+				if (!mazeCells[i].west && i % Game.COLS != 0){
+					if (!mazeCells[i-1].east){
+						if (!mazeCells[i-1].visited){
+							trace("in west");
+							possibleDirections.push(Game.WEST);
+						}
 					}
 				}
 
@@ -138,6 +152,7 @@
 					//PART C: IF NO WALLS CAN BE REMOVED,
 
 					// BEGIN BACKTRACKING; POP THE STACK
+					trace("enter else");
 					var top: int = path.pop();
 					if (top == i) {
 						i = path.pop(); //POP THE STACK - REVERSE
@@ -161,7 +176,6 @@
 				trace("YOU LOSE");
 			}
 		}
-	
 	
 		public function playGame(event: KeyboardEvent): void {
 			
@@ -195,9 +209,7 @@
 					}
 					break;
 			}
-		
 			playerReposition();
-			
 		}
 
 		public function drawMazeCells(): void {
@@ -246,6 +258,7 @@
 		}
 	
 		public function runnerReposition (): void {
+			trace("in runner reposition");
 			runner.x = mazeCells[runner.index].col * Game.SIZE + Game.OFFSET;
 			runner.y = mazeCells[runner.index].row * Game.SIZE + Game.OFFSET;
 		}
@@ -256,7 +269,6 @@
 		}
 
 		public function backtracker(): void {
-
 			//TASK 1: CREATE BACKTRACKER VARIABLES AND INITIALIZE
 			var stack: Array = new Array();
 			var i: int = 0; //Start position will be the first cell in the maze

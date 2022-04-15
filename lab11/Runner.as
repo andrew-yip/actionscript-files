@@ -3,7 +3,7 @@
 	import flash.display.*;
 	import flash.events.*;
 	
-	public class Runner extends MovieClip{
+	public class Runner extends MovieClip {
 		
 		public var visited: Boolean;
 		public var index: int;
