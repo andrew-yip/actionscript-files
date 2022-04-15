@@ -48,8 +48,15 @@
 		}
 	
 		public function startGame(): void {
+			trace(mazeCells.length);
 			startIndex = Math.floor(Math.random()*mazeCells.length);
 			endIndex = Math.floor(Math.random()*mazeCells.length);
+			
+			trace("start index: ");
+			trace(startIndex);
+			
+			trace("end index: ");
+			trace(endIndex);
 			
 			startBlock = new StartBlock(startIndex, mazeCells[startIndex].row, mazeCells[startIndex].col);
 			addChild(startBlock);
@@ -62,6 +69,16 @@
 			
 			addChild(runner);
 			addChild(player);
+			
+			trace("runner x and y");
+			trace(runner.x);
+			trace(runner.y);
+			trace();
+			
+			trace("player x and y");
+			trace(player.x);
+			trace(player.y);
+			trace();
 			
 			stage.addEventListener(KeyboardEvent.KEY_UP, playGame);
 			runnerMove();
@@ -209,6 +226,7 @@
 					}
 					break;
 			}
+		
 			playerReposition();
 		}
 
@@ -258,7 +276,6 @@
 		}
 	
 		public function runnerReposition (): void {
-			trace("in runner reposition");
 			runner.x = mazeCells[runner.index].col * Game.SIZE + Game.OFFSET;
 			runner.y = mazeCells[runner.index].row * Game.SIZE + Game.OFFSET;
 		}
