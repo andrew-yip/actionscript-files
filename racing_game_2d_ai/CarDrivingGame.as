@@ -122,13 +122,16 @@
 			speedometer.needle.rotation = car.velocity *3 * -1;
 		
 			// COPIED FROM FUNCTION BELOW
-			if (track.hitTestPoint(sensorLeft.x, sensorLeft.y, true)){ // straight
+			if (track.hitTestPoint(sensorLeft.x, sensorLeft.y, true)){ // hitting left
 				car.isTurningLeft = false;
 				car.isTurningRight = true;
-			} else if (track.hitTestPoint(sensorRight.x, sensorRight.y, true)){
+			} else if (track.hitTestPoint(sensorRight.x, sensorRight.y, true)){ // hitting right
 				car.isTurningRight = false;
 				car.isTurningLeft = true;
-			} else if (!track.hitTestPoint(sensorLeft.x, sensorLeft.y, true)){
+			} 
+		
+			// if its not hitting any of the sensors
+			else if (!track.hitTestPoint(sensorLeft.x, sensorLeft.y, true)){
 				car.isTurningRight = false;
 				car.isTurningLeft = false;
 			} else if ((!track.hitTestPoint(sensorRight.x, sensorRight.y, true))){
