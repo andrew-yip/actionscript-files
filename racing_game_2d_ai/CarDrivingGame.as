@@ -32,16 +32,7 @@
 			//TASK 3: REGISTER LISTENER EVENT FOR THE GAME LOOP
 			lastTimeStamp = getTimer();
 			addEventListener(Event.ENTER_FRAME,updateCameraAngle);
-			
-			// ADDING CAR SENSOR
 
-			//sensorLeft = new Sensor(track.x + 30, track.y - 45);
-			//sensorRight = new Sensor(track.x - 30, track.y - 45);
-			
-			//addChild(sensorLeft);
-			//addChild(sensorRight);
-			
-			// new stuff (from here down)
 			//TASK B: APPLY THE TWO SENSORS
 			car.rotation = 0;
 			var rotateAngleRadians:Number = car.rotation * toRadians;
@@ -70,6 +61,7 @@
 			sensorLeft = new Sensor(xPos, yPos);
 			addChild(sensorLeft);
 			
+			// CAR IS ALWAYS MOVING
 			car.isMovingForward = true;
 			
 		}
@@ -121,7 +113,6 @@
 		
 			speedometer.needle.rotation = car.velocity *3 * -1;
 		
-			// COPIED FROM FUNCTION BELOW
 			if (track.hitTestPoint(sensorLeft.x, sensorLeft.y, true)){ // hitting left
 				car.isTurningLeft = false;
 				car.isTurningRight = true;
@@ -131,10 +122,7 @@
 			} 
 		
 			// if its not hitting any of the sensors
-			else if (!track.hitTestPoint(sensorLeft.x, sensorLeft.y, true)){
-				car.isTurningRight = false;
-				car.isTurningLeft = false;
-			} else if ((!track.hitTestPoint(sensorRight.x, sensorRight.y, true))){
+			else if (!track.hitTestPoint(sensorLeft.x, sensorLeft.y, true) && !track.hitTestPoint(sensorRight.x, sensorRight.y, true)){
 				car.isTurningRight = false;
 				car.isTurningLeft = false;
 			}
