@@ -26,6 +26,7 @@
 			addEventListener(Event.ENTER_FRAME, driveCar);
 			
 		}
+	
 		public function driveCar(event: Event) {
 			//TASK 1: USER SPECIFIES MOVEMENT IN VELOCITY
 			if (isMovingForward) {

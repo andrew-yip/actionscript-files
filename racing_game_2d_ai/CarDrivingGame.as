@@ -66,6 +66,8 @@
 					break;
 				case Game.SPACEBAR :
 					car.isBraking = true;
+				case Game.AICAR:
+					moveAICar();
 			}
 		}
 
@@ -85,7 +87,13 @@
 					break;
 				case Game.SPACEBAR :
 					car.isBraking = false;
+				case Game.AICAR:
+					
 			}
+		}
+	
+		public function moveAICar() {
+			car.isMovingForward = true;
 		}
 	}
 }
