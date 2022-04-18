@@ -10,12 +10,15 @@
 		public var isTurningLeft: Boolean;
 		public var isTurningRight: Boolean;
 		public var isBraking: Boolean;
-		
+		public var cornerDist: Number;
+		public var thetaRadians: Number;
 		
 		public function Car(xPos, yPos: Number) {
 			this.x = xPos;
 			this.y = yPos;
 			velocity = 0; 
+			cornerDist = 0;
+			thetaRadians = 0;
 			
 			//ALL DRIVING STATES ARE INITIALLY SET TO FALSE
 			isMovingForward = false;
